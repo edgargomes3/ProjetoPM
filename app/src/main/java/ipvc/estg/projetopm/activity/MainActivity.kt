@@ -2,6 +2,9 @@ package ipvc.estg.projetopm.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -11,13 +14,23 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import ipvc.estg.projetopm.R
+import org.json.JSONException
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var mMap: GoogleMap
@@ -26,6 +39,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var locationCallback: LocationCallback
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var API_TEMPERATURA: Float = 0.0f
+    private var API_HUMIDADE: Float = 0.0f
+    private var TEMPERATURA: Float = 0.0f
+    private var HUMIDADE: Float = 0.0f
+
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,11 +105,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
         if( event.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE ) {
-            Log.d( "***TEMPERATURA***", "${event.values[0]}")
+            //TEMPERATURA = event.values[0]
+            //Log.d( "***TEMPERATURA***", "$TEMPERATURA")
         }
 
         if( event.sensor.type == Sensor.TYPE_RELATIVE_HUMIDITY ) {
-            Log.d( "***HUMIDADE***", "${event.values[0]}")
+            //HUMIDADE = event.values[0]
+            //Log.d( "***HUMIDADE***", "$HUMIDADE")
         }
     }
 
@@ -141,5 +161,45 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_refresh-> {
+                getAPIData()
+                Log.d("***API***", "${API_TEMPERATURA}ºC, ${API_HUMIDADE}%")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun getAPIData() {
+        val url = "http://api.openweathermap.org/data/2.5/weather?lat=${lastLocation.latitude}&lon=${lastLocation.longitude}&appid=fb6baa35cf48b1197abed43584e41e39&units=metric"
+
+        var jor = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            try {
+                var main = response.getJSONObject("main")
+                var weather = response.getJSONArray("weather")
+                var object1 = weather.getJSONObject(0)
+
+                var temp_min = main.getDouble("temp_min")
+                var temp_max = main.getDouble("temp_max")
+
+                API_HUMIDADE = main.getDouble("humidity").toFloat()
+                var temp = (temp_min + temp_max)/2
+                API_TEMPERATURA = temp.toFloat()
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }, {
+        })
+        var queue = Volley.newRequestQueue(this)
+        queue.add(jor)
     }
 }
