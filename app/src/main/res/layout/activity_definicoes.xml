@@ -5,4 +5,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.Definicoes">
+
+    <TextView
+        android:id="@+id/notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:text="Notificações"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/notifications_api"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_checkbox"
+        />
+    <CheckBox
+        android:id="@+id/notifications_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/notifications"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications"
+        app:layout_constraintStart_toEndOf="@+id/notifications"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/notifications_api"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:text="Notificações sobre dados do website"
+        app:layout_constraintTop_toBottomOf="@+id/notifications"
+        app:layout_constraintBottom_toTopOf="@+id/notifications_internal"
+        app:layout_constraintStart_toStartOf="@+id/notifications"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_api_checkbox"
+        />
+    <CheckBox
+        android:id="@+id/notifications_api_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/notifications_api"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_api"
+        app:layout_constraintStart_toEndOf="@+id/notifications_api"
+        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        />
+
+    <TextView
+        android:id="@+id/notifications_internal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:text="Notificações sobre dados internos"
+        app:layout_constraintTop_toBottomOf="@+id/notifications_api"
+        app:layout_constraintBottom_toTopOf="@+id/notifications_temperature_rate"
+        app:layout_constraintStart_toStartOf="@+id/notifications"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_internal_checkbox"
+        />
+    <CheckBox
+        android:id="@+id/notifications_internal_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/notifications_internal"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_internal"
+        app:layout_constraintStart_toEndOf="@+id/notifications_internal"
+        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        />
+
+    <TextView
+        android:id="@+id/notifications_temperature_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Notificações quando a temperatura interna se desviar (%)"
+        app:layout_constraintTop_toBottomOf="@+id/notifications_internal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/notifications"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_number"
+        />
+    <EditText
+        android:id="@+id/notifications_temperature_rate_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:inputType="number"
+        app:layout_constraintTop_toTopOf="@+id/notifications_temperature_rate"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_temperature_rate"
+        app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_checkbox"
+        />
+    <CheckBox
+        android:id="@+id/notifications_temperature_rate_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/notifications_temperature_rate"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_temperature_rate"
+        app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate_number"
+        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
