@@ -7,12 +7,179 @@
     tools:context=".activity.MainActivity">
 
     <TextView
+        android:id="@+id/external_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:ems="10"
+        android:text="Dados Externos"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center"
+        />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/external_temperature"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/external_data"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/external_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="center"
+        android:text="Temperatura:"
+        app:layout_constraintBottom_toTopOf="@+id/external_humidity"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/external_temperature_value"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        />
+
+    <TextView
+        android:id="@+id/external_temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/external_humidity"
+        app:layout_constraintLeft_toRightOf="@+id/external_temperature"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/external_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Humidade:"
+        app:layout_constraintTop_toBottomOf="@+id/external_temperature"
+        app:layout_constraintBottom_toTopOf="@+id/internal_data"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/external_humidity_value"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/external_humidity_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/internal_data"
+        app:layout_constraintLeft_toRightOf="@+id/external_humidity"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/external_temperature"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/internal_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Dados Internos"
+        app:layout_constraintBottom_toTopOf="@+id/internal_temperature"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/external_humidity"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/internal_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Temperatura:"
+        app:layout_constraintTop_toBottomOf="@+id/internal_data"
+        app:layout_constraintBottom_toTopOf="@+id/internal_humidity"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/internal_temperature_value"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/internal_temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@+id/internal_data"
+        app:layout_constraintBottom_toTopOf="@+id/internal_humidity"
+        app:layout_constraintLeft_toRightOf="@+id/internal_temperature"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/internal_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Humidade:"
+        app:layout_constraintTop_toBottomOf="@+id/internal_temperature"
+        app:layout_constraintBottom_toTopOf="@+id/probablity_data"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/internal_humidity_value"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/internal_humidity_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@+id/internal_temperature"
+        app:layout_constraintBottom_toTopOf="@+id/probablity_data"
+        app:layout_constraintLeft_toRightOf="@+id/internal_humidity"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/probablity_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Probabilidades"
+        app:layout_constraintTop_toBottomOf="@+id/internal_humidity"
+        app:layout_constraintBottom_toTopOf="@+id/probability_ice"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/probability_ice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Gelo:"
+        app:layout_constraintTop_toBottomOf="@+id/probablity_data"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/probability_ice_value"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/probability_ice_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="0%"
+        app:layout_constraintTop_toBottomOf="@+id/probablity_data"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/probability_ice"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

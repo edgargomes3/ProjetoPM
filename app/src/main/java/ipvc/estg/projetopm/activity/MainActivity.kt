@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.android.volley.Request
@@ -39,6 +40,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var locationCallback: LocationCallback
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private lateinit var external_temperature: TextView
+    private lateinit var external_humidity: TextView
+    private lateinit var internal_temperature: TextView
+    private lateinit var internal_humidity: TextView
+    private lateinit var probability_ice: TextView
+
     private var API_TEMPERATURA: Float = 0.0f
     private var API_HUMIDADE: Float = 0.0f
     private var TEMPERATURA: Float = 0.0f
@@ -46,9 +54,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        external_temperature = findViewById(R.id.external_temperature_value)
+        external_humidity = findViewById(R.id.external_humidity_value)
+        internal_temperature = findViewById(R.id.internal_temperature_value)
+        internal_humidity = findViewById(R.id.internal_humidity_value)
+        probability_ice = findViewById(R.id.probability_ice_value)
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
@@ -105,13 +121,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
         if( event.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE ) {
-            //TEMPERATURA = event.values[0]
-            //Log.d( "***TEMPERATURA***", "$TEMPERATURA")
+            TEMPERATURA = event.values[0]
+            Log.d( "***TEMPERATURA***", "$TEMPERATURA")
         }
 
         if( event.sensor.type == Sensor.TYPE_RELATIVE_HUMIDITY ) {
-            //HUMIDADE = event.values[0]
-            //Log.d( "***HUMIDADE***", "$HUMIDADE")
+            HUMIDADE = event.values[0]
+            Log.d( "***HUMIDADE***", "$HUMIDADE")
         }
     }
 
@@ -171,7 +187,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh-> {
-                getAPIData()
+                refresh_data()
                 Log.d("***API***", "${API_TEMPERATURA}ºC, ${API_HUMIDADE}%")
                 true
             }
@@ -179,7 +195,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    fun getAPIData() {
+    private fun refresh_data() {
         val url = "http://api.openweathermap.org/data/2.5/weather?lat=${lastLocation.latitude}&lon=${lastLocation.longitude}&appid=fb6baa35cf48b1197abed43584e41e39&units=metric"
 
         var jor = JsonObjectRequest(Request.Method.GET, url, null, { response ->
@@ -194,6 +210,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 API_HUMIDADE = main.getDouble("humidity").toFloat()
                 var temp = (temp_min + temp_max)/2
                 API_TEMPERATURA = temp.toFloat()
+
+                external_temperature.text = "${API_TEMPERATURA}ºC"
+                external_humidity.text = "${API_HUMIDADE}%"
+                internal_temperature.text = "${TEMPERATURA}ºC"
+                internal_humidity.text = "${HUMIDADE}%"
+                probability_ice.text = "0%"
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
