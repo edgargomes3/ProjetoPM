@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ProjetoPM</string>
+    <string name="app_name" translatable="false">ProjetoPM</string>
+    <string name="preference_file_key" translatable="false">preference_file_key</string>
+    <string name="notifications_enabled" translatable="false">notifications_enabled</string>
+    <string name="notifications_temperature_enabled" translatable="false">notifications_temperature_enabled</string>
+    <string name="notifications_internal_enabled" translatable="false">notifications_internal_enabled</string>
+    <string name="notifications_api_enabled">notifications_api_enabled</string>
 </resources>

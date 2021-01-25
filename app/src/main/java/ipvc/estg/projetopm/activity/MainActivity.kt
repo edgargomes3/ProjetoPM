@@ -136,7 +136,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun getLocationUpdates()
     {
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
         locationRequest.interval = 5000
@@ -188,7 +187,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         return when (item.itemId) {
             R.id.menu_refresh-> {
                 refresh_data()
-                Log.d("***API***", "${API_TEMPERATURA}ºC, ${API_HUMIDADE}%")
+                true
+            }
+            R.id.menu_settings-> {
+                val intent = Intent(this, Definicoes::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

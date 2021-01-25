@@ -25,6 +25,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/notifications"
         app:layout_constraintStart_toEndOf="@+id/notifications"
         app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="onCheckboxClicked"
         />
 
     <TextView
@@ -46,6 +47,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/notifications_api"
         app:layout_constraintStart_toEndOf="@+id/notifications_api"
         app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        android:onClick="onCheckboxClicked"
         />
 
     <TextView
@@ -67,6 +69,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/notifications_internal"
         app:layout_constraintStart_toEndOf="@+id/notifications_internal"
         app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        android:onClick="onCheckboxClicked"
         />
 
     <TextView
@@ -99,6 +102,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/notifications_temperature_rate"
         app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate_number"
         app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        android:onClick="onCheckboxClicked"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
