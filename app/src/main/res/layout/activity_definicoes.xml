@@ -10,7 +10,7 @@
         android:id="@+id/notifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="20"
+        android:ems="15"
         android:text="Notificações"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/notifications_api"
@@ -32,11 +32,11 @@
         android:id="@+id/notifications_api"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="20"
+        android:ems="15"
         android:text="Notificações sobre dados do website"
         app:layout_constraintTop_toBottomOf="@+id/notifications"
         app:layout_constraintBottom_toTopOf="@+id/notifications_internal"
-        app:layout_constraintStart_toStartOf="@+id/notifications"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/notifications_api_checkbox"
         />
     <CheckBox
@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="@+id/notifications_api"
         app:layout_constraintBottom_toBottomOf="@+id/notifications_api"
         app:layout_constraintStart_toEndOf="@+id/notifications_api"
-        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
         android:onClick="onCheckboxClicked"
         />
 
@@ -54,11 +54,11 @@
         android:id="@+id/notifications_internal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="20"
+        android:ems="15"
         android:text="Notificações sobre dados internos"
         app:layout_constraintTop_toBottomOf="@+id/notifications_api"
         app:layout_constraintBottom_toTopOf="@+id/notifications_temperature_rate"
-        app:layout_constraintStart_toStartOf="@+id/notifications"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/notifications_internal_checkbox"
         />
     <CheckBox
@@ -68,7 +68,7 @@
         app:layout_constraintTop_toTopOf="@+id/notifications_internal"
         app:layout_constraintBottom_toBottomOf="@+id/notifications_internal"
         app:layout_constraintStart_toEndOf="@+id/notifications_internal"
-        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
         android:onClick="onCheckboxClicked"
         />
 
@@ -77,14 +77,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:text="Notificações quando a temperatura interna se desviar (%)"
+        android:text="Notificações quando os valores internos se desviar (%)"
         app:layout_constraintTop_toBottomOf="@+id/notifications_internal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/notifications"
-        app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_value"
         />
     <EditText
-        android:id="@+id/notifications_temperature_rate_number"
+        android:id="@+id/notifications_temperature_rate_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="5"
@@ -100,8 +100,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/notifications_temperature_rate"
         app:layout_constraintBottom_toBottomOf="@+id/notifications_temperature_rate"
-        app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate_number"
-        app:layout_constraintEnd_toEndOf="@+id/notifications_checkbox"
+        app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate_value"
+        app:layout_constraintEnd_toEndOf="parent"
         android:onClick="onCheckboxClicked"
         />
 

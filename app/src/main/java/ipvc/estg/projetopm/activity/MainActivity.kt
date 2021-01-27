@@ -2,6 +2,10 @@ package ipvc.estg.projetopm.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationChannel.DEFAULT_CHANNEL_ID
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,8 +15,10 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -20,6 +26,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.VolleyError
@@ -49,12 +56,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private var API_TEMPERATURA: Float = 0.0f
     private var API_HUMIDADE: Float = 0.0f
+    private var LAST_API_TEMPERATURA: Float = 0.0f
+    private var LAST_API_HUMIDADE: Float = 0.0f
+
     private var TEMPERATURA: Float = 0.0f
     private var HUMIDADE: Float = 0.0f
+    private var LAST_TEMPERATURA: Float = 0.0f
+    private var LAST_HUMIDADE: Float = 0.0f
+
+
+    lateinit var notificationManager: NotificationManager
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +96,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         getLocationUpdates()
+
+        Handler().postDelayed({
+            refresh_data()
+        }, 500)
     }
 
     @SuppressLint("NewApi")
@@ -121,14 +140,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
         if( event.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE ) {
+            LAST_TEMPERATURA = TEMPERATURA
             TEMPERATURA = event.values[0]
             Log.d( "***TEMPERATURA***", "$TEMPERATURA")
         }
 
         if( event.sensor.type == Sensor.TYPE_RELATIVE_HUMIDITY ) {
+            LAST_HUMIDADE = HUMIDADE
             HUMIDADE = event.values[0]
             Log.d( "***HUMIDADE***", "$HUMIDADE")
         }
+
+        notifications()
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
@@ -183,12 +206,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         inflater.inflate(R.menu.menu_main, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_refresh-> {
-                refresh_data()
-                true
-            }
             R.id.menu_settings-> {
                 val intent = Intent(this, Definicoes::class.java)
                 startActivity(intent)
@@ -209,16 +229,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
                 var temp_min = main.getDouble("temp_min")
                 var temp_max = main.getDouble("temp_max")
-
-                API_HUMIDADE = main.getDouble("humidity").toFloat()
                 var temp = (temp_min + temp_max)/2
+                var tempHum = main.getDouble("humidity")
+
+                LAST_API_HUMIDADE = API_HUMIDADE
+                LAST_API_TEMPERATURA = API_TEMPERATURA
+                API_HUMIDADE = tempHum.toFloat()
                 API_TEMPERATURA = temp.toFloat()
 
                 external_temperature.text = "${API_TEMPERATURA}ºC"
                 external_humidity.text = "${API_HUMIDADE}%"
                 internal_temperature.text = "${TEMPERATURA}ºC"
                 internal_humidity.text = "${HUMIDADE}%"
-                probability_ice.text = "0%"
+
+                probabilidade()
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
@@ -226,5 +250,80 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         })
         var queue = Volley.newRequestQueue(this)
         queue.add(jor)
+
+        Handler().postDelayed({
+            refresh_data()
+        }, 500)
+    }
+
+    private fun notifications() {
+        val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        val notifications_check = sharedPref.getBoolean(getString(R.string.notifications_enabled), false)
+        if( notifications_check ) {
+            val notifications_api_check = sharedPref.getBoolean(getString(R.string.notifications_api_enabled), false)
+            if( notifications_api_check  && ( LAST_API_TEMPERATURA != API_TEMPERATURA || LAST_API_HUMIDADE != API_HUMIDADE ) ) {
+                var builder = NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_baseline_android_24)
+                        .setContentTitle("API Data")
+                        .setContentText("Temperatura: ${API_TEMPERATURA}ºC, Humidade: ${API_HUMIDADE}%")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                notificationManager.notify( 1234, builder.build() )
+            }
+
+            val notifications_internal_check = sharedPref.getBoolean(getString(R.string.notifications_internal_enabled), false)
+            if( notifications_internal_check  && ( LAST_TEMPERATURA != TEMPERATURA || LAST_HUMIDADE != HUMIDADE ) ) {
+                var builder = NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_baseline_android_24)
+                        .setContentTitle("Internal Data")
+                        .setContentText("Temperatura: ${TEMPERATURA}ºC, Humidade: ${HUMIDADE}%")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                notificationManager.notify( 12345, builder.build() )
+            }
+
+            val notifications_temperature_rate_check = sharedPref.getBoolean(getString(R.string.notifications_temperature_rate_enabled), false)
+            var notifications_temperature_rate_value_number = sharedPref.getInt(getString(R.string.notifications_temperature_rate_value), 0)
+            if( notifications_temperature_rate_check  ) {
+                var rate = notifications_temperature_rate_value_number/100f
+                var lowRate = 1-rate
+                var highRate = 1+rate
+                var lowT = API_TEMPERATURA*lowRate
+                var highT = API_TEMPERATURA*highRate
+                if( TEMPERATURA < lowT || TEMPERATURA > highT ) {
+                    var builder = NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_baseline_android_24)
+                            .setContentTitle("Unpredicted Data")
+                            .setContentText("Temperatura: ${TEMPERATURA}ºC/${API_TEMPERATURA}ºC (Interno/API)")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    notificationManager.notify( 123456, builder.build() )
+                }
+            }
+        }
+    }
+
+    private fun probabilidade() {
+        if( TEMPERATURA == 0.0f ) {
+            if( HUMIDADE >= 90 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            else if( HUMIDADE >= 50 && HUMIDADE < 90 ) probability_ice.text = "Provável"
+            else if( HUMIDADE >= 25 && HUMIDADE < 50 ) probability_ice.text = "Pouco Provável"
+            else if( HUMIDADE >= 0 && HUMIDADE < 25 ) probability_ice.text = "Nenhum Risco"
+        }
+        else if( TEMPERATURA >= -2 && TEMPERATURA < 0 ) {
+            if( HUMIDADE >= 80 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            else if( HUMIDADE >= 20 && HUMIDADE < 80 ) probability_ice.text = "Provável"
+            else if( HUMIDADE >= 0 && HUMIDADE < 20 ) probability_ice.text = "Pouco Provável"
+        }
+        else if( TEMPERATURA >= -5 && TEMPERATURA < -2 ) {
+            if( HUMIDADE >= 70 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            else if( HUMIDADE >= 35 && HUMIDADE < 70 ) probability_ice.text = "Provável"
+            else if( HUMIDADE >= 0 && HUMIDADE < 35 ) probability_ice.text = "Pouco Provável"
+        }
+        else if( TEMPERATURA >= -8 && TEMPERATURA < -5 ) {
+            if( HUMIDADE >= 60 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            else if( HUMIDADE >= 20 && HUMIDADE < 60 ) probability_ice.text = "Provável"
+            else if( HUMIDADE >= 0 && HUMIDADE < 20 ) probability_ice.text = "Pouco Provável"
+        }
+        else if( TEMPERATURA < -8 ) probability_ice.text = "Provável"
+        else if( TEMPERATURA < -11 ) probability_ice.text = "Muito Provável"
+        else probability_ice.text = "Nenhum Risco"
     }
 }
