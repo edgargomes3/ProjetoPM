@@ -19,6 +19,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -39,6 +40,8 @@ import com.google.android.gms.maps.model.LatLng
 import ipvc.estg.projetopm.R
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var mMap: GoogleMap
@@ -260,41 +263,87 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
         val notifications_check = sharedPref.getBoolean(getString(R.string.notifications_enabled), false)
         if( notifications_check ) {
-            val notifications_api_check = sharedPref.getBoolean(getString(R.string.notifications_api_enabled), false)
-            if( notifications_api_check  && ( LAST_API_TEMPERATURA != API_TEMPERATURA || LAST_API_HUMIDADE != API_HUMIDADE ) ) {
-                var builder = NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_baseline_android_24)
-                        .setContentTitle("API Data")
-                        .setContentText("Temperatura: ${API_TEMPERATURA}ºC, Humidade: ${API_HUMIDADE}%")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                notificationManager.notify( 1234, builder.build() )
-            }
+            val notifications_hour_check = sharedPref.getBoolean(getString(R.string.notifications_hour_enabled), false)
+            if( notifications_hour_check ) {
+                val timestamp = SimpleDateFormat("HH:mm").format(Date())
+                val notifications_hour_value = sharedPref.getString(getString(R.string.notifications_hour), null)
+                if( notifications_hour_value != null && TextUtils.equals( timestamp, notifications_hour_value ) ) {
+                    val notifications_api_check = sharedPref.getBoolean(getString(R.string.notifications_api_enabled), false)
+                    if( notifications_api_check  && ( LAST_API_TEMPERATURA != API_TEMPERATURA || LAST_API_HUMIDADE != API_HUMIDADE ) ) {
+                        var builder = NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_baseline_android_24)
+                                .setContentTitle("API Data")
+                                .setContentText("Temperatura: ${API_TEMPERATURA}ºC, Humidade: ${API_HUMIDADE}%")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        notificationManager.notify( 1234, builder.build() )
+                    }
 
-            val notifications_internal_check = sharedPref.getBoolean(getString(R.string.notifications_internal_enabled), false)
-            if( notifications_internal_check  && ( LAST_TEMPERATURA != TEMPERATURA || LAST_HUMIDADE != HUMIDADE ) ) {
-                var builder = NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_baseline_android_24)
-                        .setContentTitle("Internal Data")
-                        .setContentText("Temperatura: ${TEMPERATURA}ºC, Humidade: ${HUMIDADE}%")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                notificationManager.notify( 12345, builder.build() )
-            }
+                    val notifications_internal_check = sharedPref.getBoolean(getString(R.string.notifications_internal_enabled), false)
+                    if( notifications_internal_check  && ( LAST_TEMPERATURA != TEMPERATURA || LAST_HUMIDADE != HUMIDADE ) ) {
+                        var builder = NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_baseline_android_24)
+                                .setContentTitle("Internal Data")
+                                .setContentText("Temperatura: ${TEMPERATURA}ºC, Humidade: ${HUMIDADE}%")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        notificationManager.notify( 12345, builder.build() )
+                    }
 
-            val notifications_temperature_rate_check = sharedPref.getBoolean(getString(R.string.notifications_temperature_rate_enabled), false)
-            var notifications_temperature_rate_value_number = sharedPref.getInt(getString(R.string.notifications_temperature_rate_value), 0)
-            if( notifications_temperature_rate_check  ) {
-                var rate = notifications_temperature_rate_value_number/100f
-                var lowRate = 1-rate
-                var highRate = 1+rate
-                var lowT = API_TEMPERATURA*lowRate
-                var highT = API_TEMPERATURA*highRate
-                if( TEMPERATURA < lowT || TEMPERATURA > highT ) {
+                    val notifications_temperature_rate_check = sharedPref.getBoolean(getString(R.string.notifications_temperature_rate_enabled), false)
+                    var notifications_temperature_rate_value_number = sharedPref.getInt(getString(R.string.notifications_temperature_rate_value), 0)
+                    if( notifications_temperature_rate_check  ) {
+                        var rate = notifications_temperature_rate_value_number/100f
+                        var lowRate = 1-rate
+                        var highRate = 1+rate
+                        var lowT = API_TEMPERATURA*lowRate
+                        var highT = API_TEMPERATURA*highRate
+                        if( TEMPERATURA < lowT || TEMPERATURA > highT ) {
+                            var builder = NotificationCompat.Builder(this)
+                                    .setSmallIcon(R.drawable.ic_baseline_android_24)
+                                    .setContentTitle("Unpredicted Data")
+                                    .setContentText("Temperatura: ${TEMPERATURA}ºC/${API_TEMPERATURA}ºC (Interno/API)")
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            notificationManager.notify( 123456, builder.build() )
+                        }
+                    }
+                }
+            }
+            else {
+                val notifications_api_check = sharedPref.getBoolean(getString(R.string.notifications_api_enabled), false)
+                if( notifications_api_check  && ( LAST_API_TEMPERATURA != API_TEMPERATURA || LAST_API_HUMIDADE != API_HUMIDADE ) ) {
                     var builder = NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_baseline_android_24)
-                            .setContentTitle("Unpredicted Data")
-                            .setContentText("Temperatura: ${TEMPERATURA}ºC/${API_TEMPERATURA}ºC (Interno/API)")
+                            .setContentTitle("API Data")
+                            .setContentText("Temperatura: ${API_TEMPERATURA}ºC, Humidade: ${API_HUMIDADE}%")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    notificationManager.notify( 123456, builder.build() )
+                    notificationManager.notify( 1234, builder.build() )
+                }
+
+                val notifications_internal_check = sharedPref.getBoolean(getString(R.string.notifications_internal_enabled), false)
+                if( notifications_internal_check  && ( LAST_TEMPERATURA != TEMPERATURA || LAST_HUMIDADE != HUMIDADE ) ) {
+                    var builder = NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_baseline_android_24)
+                            .setContentTitle("Internal Data")
+                            .setContentText("Temperatura: ${TEMPERATURA}ºC, Humidade: ${HUMIDADE}%")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    notificationManager.notify( 12345, builder.build() )
+                }
+
+                val notifications_temperature_rate_check = sharedPref.getBoolean(getString(R.string.notifications_temperature_rate_enabled), false)
+                var notifications_temperature_rate_value_number = sharedPref.getInt(getString(R.string.notifications_temperature_rate_value), 0)
+                if( notifications_temperature_rate_check  ) {
+                    var rate = notifications_temperature_rate_value_number/100f
+                    var lowRate = 1-rate
+                    var highRate = 1+rate
+                    var lowT = API_TEMPERATURA*lowRate
+                    var highT = API_TEMPERATURA*highRate
+                    if( TEMPERATURA < lowT || TEMPERATURA > highT ) {
+                        var builder = NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_baseline_android_24)
+                                .setContentTitle("Unpredicted Data")
+                                .setContentText("Temperatura: ${TEMPERATURA}ºC/${API_TEMPERATURA}ºC (Interno/API)")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        notificationManager.notify( 123456, builder.build() )
+                    }
                 }
             }
         }
@@ -302,27 +351,27 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun probabilidade() {
         if( TEMPERATURA == 0.0f ) {
-            if( HUMIDADE >= 90 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            if( HUMIDADE >= 90 && HUMIDADE <= 100 ) probability_ice.text = "Muito Provável"
             else if( HUMIDADE >= 50 && HUMIDADE < 90 ) probability_ice.text = "Provável"
             else if( HUMIDADE >= 25 && HUMIDADE < 50 ) probability_ice.text = "Pouco Provável"
             else if( HUMIDADE >= 0 && HUMIDADE < 25 ) probability_ice.text = "Nenhum Risco"
         }
         else if( TEMPERATURA >= -2 && TEMPERATURA < 0 ) {
-            if( HUMIDADE >= 80 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            if( HUMIDADE >= 80 && HUMIDADE <= 100 ) probability_ice.text = "Muito Provável"
             else if( HUMIDADE >= 20 && HUMIDADE < 80 ) probability_ice.text = "Provável"
             else if( HUMIDADE >= 0 && HUMIDADE < 20 ) probability_ice.text = "Pouco Provável"
         }
         else if( TEMPERATURA >= -5 && TEMPERATURA < -2 ) {
-            if( HUMIDADE >= 70 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            if( HUMIDADE >= 70 && HUMIDADE <= 100 ) probability_ice.text = "Muito Provável"
             else if( HUMIDADE >= 35 && HUMIDADE < 70 ) probability_ice.text = "Provável"
             else if( HUMIDADE >= 0 && HUMIDADE < 35 ) probability_ice.text = "Pouco Provável"
         }
         else if( TEMPERATURA >= -8 && TEMPERATURA < -5 ) {
-            if( HUMIDADE >= 60 && HUMIDADE < 100 ) probability_ice.text = "Muito Provável"
+            if( HUMIDADE >= 60 && HUMIDADE <= 100 ) probability_ice.text = "Muito Provável"
             else if( HUMIDADE >= 20 && HUMIDADE < 60 ) probability_ice.text = "Provável"
             else if( HUMIDADE >= 0 && HUMIDADE < 20 ) probability_ice.text = "Pouco Provável"
         }
-        else if( TEMPERATURA < -8 ) probability_ice.text = "Provável"
+        else if( TEMPERATURA >= -11 && TEMPERATURA < -8 ) probability_ice.text = "Provável"
         else if( TEMPERATURA < -11 ) probability_ice.text = "Muito Provável"
         else probability_ice.text = "Nenhum Risco"
     }

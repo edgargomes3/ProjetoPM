@@ -6,4 +6,6 @@
     <string name="notifications_internal_enabled" translatable="false">notifications_internal_enabled</string>
     <string name="notifications_api_enabled" translatable="false">notifications_api_enabled</string>
     <string name="notifications_temperature_rate_value" translatable="false">notifications_temperature_rate_value</string>
+    <string name="notifications_hour" translatable="false">notifications_hour</string>
+    <string name="notifications_hour_enabled" translatable="false">notifications_hour_enabled</string>
 </resources>

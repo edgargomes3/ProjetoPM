@@ -79,7 +79,7 @@
         android:ems="10"
         android:text="Notificações quando os valores internos se desviar (%)"
         app:layout_constraintTop_toBottomOf="@+id/notifications_internal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/notifications_hour"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_value"
         />
@@ -101,6 +101,40 @@
         app:layout_constraintTop_toTopOf="@+id/notifications_temperature_rate"
         app:layout_constraintBottom_toBottomOf="@+id/notifications_temperature_rate"
         app:layout_constraintStart_toEndOf="@+id/notifications_temperature_rate_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="onCheckboxClicked"
+        />
+
+    <TextView
+        android:id="@+id/notifications_hour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Hora das Notificações"
+        app:layout_constraintTop_toBottomOf="@+id/notifications_temperature_rate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_temperature_rate_value"
+        />
+    <EditText
+        android:id="@+id/notifications_hour_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:inputType="time"
+        app:layout_constraintTop_toTopOf="@+id/notifications_hour"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_hour"
+        app:layout_constraintStart_toEndOf="@+id/notifications_hour"
+        app:layout_constraintEnd_toStartOf="@+id/notifications_hour_checkbox"
+        android:onClick="onClick"
+        />
+    <CheckBox
+        android:id="@+id/notifications_hour_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/notifications_hour"
+        app:layout_constraintBottom_toBottomOf="@+id/notifications_hour"
+        app:layout_constraintStart_toEndOf="@+id/notifications_hour_value"
         app:layout_constraintEnd_toEndOf="parent"
         android:onClick="onCheckboxClicked"
         />
